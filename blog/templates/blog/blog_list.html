@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Blog List{% endblock %}
+
+{% block content %}
+    <h2>Blog List</h2>
+    <form method="GET" action="{% url 'blog_list' %}">
+        <input type="text" name="q" placeholder="Search..." value="{{ query|default:'' }}">
+        <button type="submit">Search</button>
+    </form>
+    <ul>
+        {% for post in page_obj %}
+            <li>
+                <a href="{% url 'blog_detail' post.pk %}">{{ post.title }}</a>
+                <p>{{ post.created_at }}</p>
+                <p>{{ post.content|slice:":100" }}...</p>
+            </li>
+        {% endfor %}
+    </ul>
+    <div>
+        {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}">Previous</a>
+        {% endif %}
+        <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}">Next</a>
+        {% endif %}
+    </div>
+    <a href="{% url 'create_blog_post' %}">Create New Post</a>
+{% endblock %}
